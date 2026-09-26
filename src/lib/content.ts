@@ -1,19 +1,173 @@
 export const defaultContent = {
-  event: {name:'Investor Golf Capital Summit',location:'San Antonio, Texas',timing:'February 2027',exactDates:'',dayTwoVenue:'',golfVenue:'Briggs Ranch Golf Club',participants:'~150',teams:'40',players:'80',applicationsOpen:false,logoUrl:'',mindfulTechUrl:'',contactEmail:'',ticketPrice:'',paymentProvider:'',salonAccess:'Limited access. Curated participation.',golfAwards:'Sponsored Competition & Charity Awards'},
-  hero:{headline:'Investor Golf',headlineAccent:'Capital Summit',tagline:'Private markets. Modern financial rails. Real relationships.',description:'A curated gathering connecting investors, financial leaders, innovators and strategic partners through golf, private conversations and the future of financial infrastructure.'},
-  concept:{headline:'Two days. One curated capital network.',golf:'Premium golf experience at Briggs Ranch Golf Club. Curated pairings bring investors, executives, strategic partners, athletes and private-market leaders together with premium hospitality and an awards experience.',summit:'Focused conversations surrounding private markets, tokenization, stablecoins, wealth management, digital assets, real-world assets, private credit and institutional financial infrastructure.'},
-  story:{headline:'The most valuable conversations rarely happen on a conference stage.',description:'IGCS is built around a simple idea: relationships drive capital.',pillars:[{name:'Golf',description:'Creates time.'},{name:'Conversation',description:'Creates trust.'},{name:'Intelligence',description:'Creates opportunity.'}]},
-  audience:['Family Offices','Accredited & HNW Investors','Asset Managers','Private-Market Investors','Wealth Advisors','Financial Institutions','FinTech Leaders','Digital Asset Infrastructure','Founders','Athletes & Strategic Personalities'],
-  journey:[{stage:'Arrival',title:'VIP Welcome'},{stage:'Golf',title:'Investor Golf Experience'},{stage:'Evening',title:'Awards + Private Reception'},{stage:'Summit',title:'Capital Summit'},{stage:'Showcase',title:'Investment & Innovation Conversations'},{stage:'Salons',title:'Private Investor Dinners'}],
-  golf:{headline:'Golf is the relationship engine.',description:'Golf provides something traditional conferences rarely offer: several uninterrupted hours with the people you came to meet.',experiences:['Curated pairings','Investor / executive networking','Premium hospitality','Athlete participation','On-course partner experiences','Awards reception','Charity component']},
-  summit:{headline:'Where private capital meets the next financial system.',topics:[{name:'Private Markets',description:'New structures for access and capital formation.'},{name:'Tokenization',description:'Connecting traditional assets with digital infrastructure.'},{name:'Stablecoins',description:'The emerging settlement layer.'},{name:'Digital Wealth',description:'How advisors and institutions approach digital assets.'},{name:'Real-World Assets',description:'Credit, real estate and alternative assets.'},{name:'Custody & Compliance',description:'Institutional infrastructure required for adoption.'},{name:'Financial Infrastructure',description:'The rails connecting TradFi, FinTech and DeFi.'}]},
-  speakers:[] as {name:string;title:string;organization:string;session:string;photo:string;socialUrl:string}[],
-  salons:{headline:'After the stage, the real conversations begin.',description:'Intimate private dinners designed around specific investment themes and curated participant groups.',themes:['Private Credit','Tokenized Assets','Family Office Strategy','Stablecoin Infrastructure','Digital Wealth','Real Estate Capital','LATAM Investment Opportunities']},
-  partnerships:{headline:'More than logo placement.',description:'IGCS partnerships are built around participation, access, experience ownership and meaningful engagement with the people shaping the next generation of finance.',types:['Title Partner','Presenting Partner','Capital Markets Partner','Digital Infrastructure Partner','Custody Partner','Golf Partner','Hospitality Partner','Experience Partner']},
-  partners:[] as {name:string;type:string;logo:string;website:string}[],
-  destination:{headline:'Modern Texas capital.',description:'A setting with room to think. Hill Country landscapes, considered hospitality and the energy of San Antonio form the backdrop for two days of meaningful connection.'},
-  updates:[] as {title:string;body:string}[],faqs:[] as {question:string;answer:string}[],
-  legal:{privacy:'',terms:'','event-terms':'','cancellation-refunds':'','media-release':'','crypto-payments':'','golf-competition':''},
+  event: {
+    name: "Investor Golf Capital Summit",
+    location: "San Antonio, Texas",
+    timing: "February 2027",
+    exactDates: "",
+    dayTwoVenue: "",
+    golfVenue: "Briggs Ranch Golf Club",
+    participants: "~150",
+    teams: "40",
+    players: "80",
+    applicationsOpen: false,
+    logoUrl: "",
+    mindfulTechUrl: "",
+    contactEmail: "",
+    ticketPrice: "",
+    paymentProvider: "",
+    salonAccess: "Limited access. Curated participation.",
+    golfAwards: "Sponsored Competition & Charity Awards",
+  },
+  hero: {
+    headline: "Investor Golf",
+    headlineAccent: "Capital Summit",
+    tagline: "Private markets. Modern financial rails. Real relationships.",
+    description:
+      "A curated gathering connecting investors, financial leaders, innovators and strategic partners through golf, private conversations and the future of financial infrastructure.",
+  },
+  concept: {
+    headline: "Two days. One curated capital network.",
+    golf: "Premium golf experience at Briggs Ranch Golf Club. Curated pairings bring investors, executives, strategic partners, athletes and private-market leaders together with premium hospitality and an awards experience.",
+    summit:
+      "Focused conversations surrounding private markets, tokenization, stablecoins, wealth management, digital assets, real-world assets, private credit and institutional financial infrastructure.",
+  },
+  story: {
+    headline:
+      "The most valuable conversations rarely happen on a conference stage.",
+    description:
+      "IGCS is built around a simple idea: relationships drive capital.",
+    pillars: [
+      { name: "Golf", description: "Creates time." },
+      { name: "Conversation", description: "Creates trust." },
+      { name: "Intelligence", description: "Creates opportunity." },
+    ],
+  },
+  audience: [
+    "Family Offices",
+    "Accredited & HNW Investors",
+    "Asset Managers",
+    "Private-Market Investors",
+    "Wealth Advisors",
+    "Financial Institutions",
+    "FinTech Leaders",
+    "Digital Asset Infrastructure",
+    "Founders",
+    "Athletes & Strategic Personalities",
+  ],
+  journey: [
+    { stage: "Arrival", title: "VIP Welcome" },
+    { stage: "Golf", title: "Investor Golf Experience" },
+    { stage: "Evening", title: "Awards + Private Reception" },
+    { stage: "Summit", title: "Capital Summit" },
+    { stage: "Showcase", title: "Investment & Innovation Conversations" },
+    { stage: "Salons", title: "Private Investor Dinners" },
+  ],
+  golf: {
+    headline: "Golf is the relationship engine.",
+    description:
+      "Golf provides something traditional conferences rarely offer: several uninterrupted hours with the people you came to meet.",
+    experiences: [
+      "Curated pairings",
+      "Investor / executive networking",
+      "Premium hospitality",
+      "Athlete participation",
+      "On-course partner experiences",
+      "Awards reception",
+      "Charity component",
+    ],
+  },
+  summit: {
+    headline: "Where private capital meets the next financial system.",
+    topics: [
+      {
+        name: "Private Markets",
+        description: "New structures for access and capital formation.",
+      },
+      {
+        name: "Tokenization",
+        description:
+          "Connecting traditional assets with digital infrastructure.",
+      },
+      { name: "Stablecoins", description: "The emerging settlement layer." },
+      {
+        name: "Digital Wealth",
+        description: "How advisors and institutions approach digital assets.",
+      },
+      {
+        name: "Real-World Assets",
+        description: "Credit, real estate and alternative assets.",
+      },
+      {
+        name: "Custody & Compliance",
+        description: "Institutional infrastructure required for adoption.",
+      },
+      {
+        name: "Financial Infrastructure",
+        description: "The rails connecting TradFi, FinTech and DeFi.",
+      },
+    ],
+  },
+  speakers: [] as {
+    name: string;
+    title: string;
+    organization: string;
+    session: string;
+    photo: string;
+    socialUrl: string;
+  }[],
+  salons: {
+    headline: "After the stage, the real conversations begin.",
+    description:
+      "Intimate private dinners designed around specific investment themes and curated participant groups.",
+    themes: [
+      "Private Credit",
+      "Tokenized Assets",
+      "Family Office Strategy",
+      "Stablecoin Infrastructure",
+      "Digital Wealth",
+      "Real Estate Capital",
+      "LATAM Investment Opportunities",
+    ],
+  },
+  partnerships: {
+    headline: "More than logo placement.",
+    description:
+      "IGCS partnerships are built around participation, access, experience ownership and meaningful engagement with the people shaping the next generation of finance.",
+    types: [
+      "Title Partner",
+      "Presenting Partner",
+      "Capital Markets Partner",
+      "Digital Infrastructure Partner",
+      "Custody Partner",
+      "Golf Partner",
+      "Hospitality Partner",
+      "Experience Partner",
+    ],
+  },
+  partners: [] as {
+    name: string;
+    type: string;
+    logo: string;
+    website: string;
+  }[],
+  destination: {
+    headline: "Modern Texas capital.",
+    description:
+      "A setting with room to think. Hill Country landscapes, considered hospitality and the energy of San Antonio form the backdrop for two days of meaningful connection.",
+  },
+  updates: [] as { title: string; body: string }[],
+  faqs: [] as { question: string; answer: string }[],
+  legal: {
+    privacy: "",
+    terms: "",
+    "event-terms": "",
+    "cancellation-refunds": "",
+    "media-release": "",
+    "crypto-payments": "",
+    "golf-competition": "",
+  },
 };
 export type SiteContent = typeof defaultContent;
-export function safeUrl(value:string){return /^https:\/\//i.test(value)?value:undefined}
+export function safeUrl(value: string) {
+  return /^https:\/\//i.test(value) ? value : undefined;
+}

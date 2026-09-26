@@ -42,3 +42,7 @@ Downloaded as WebP, served using next/image. Unsplash License: https://unsplash.
 ## Launch items still required
 
 Approved logo files and OG image, Vercel project access, Supabase project and admin provisioning, approved legal copy, GA4 measurement ID, official Mindful Tech link, final event details, production integration tests, and production Lighthouse verification. Do not claim the Phase 1 definition of done until these are complete.
+
+## Verification
+
+Run `npm run build`, then `node --test tests/http.test.mjs`. The HTTP suite starts an isolated production server on 127.0.0.1:3101 with Supabase disabled and stops it when finished. It verifies rendering, privacy headers, unauthenticated admin access, origin validation, malformed roles/URLs/login, oversized bodies, closed storage behavior, and legal placeholder labeling. It never inserts live lead records. Nine checks passed on 2026-09-26. Browser-based responsive and performance QA remains outstanding because the browser automation runtime was unavailable during this pass.

@@ -1,4 +1,183 @@
-import {NextRequest,NextResponse} from 'next/server';
-import {db,databaseReady,getContent} from '@/lib/server';
-import {createHash} from 'node:crypto';
-export async function POST(req:NextRequest){if(req.headers.get('origin')!==req.nextUrl.origin)return NextResponse.json({error:'Invalid request origin.'},{status:403});if(Number(req.headers.get('content-length')||0)>20000)return NextResponse.json({error:'Request too large.'},{status:413});try{const raw=await req.text();if(raw.length>20000)return NextResponse.json({error:'Request too large.'},{status:413});const body=JSON.parse(raw);const {kind,fields}=body;if(!['invitation','partner'].includes(kind)||!fields||typeof fields!=='object')return NextResponse.json({error:'Invalid request.'},{status:400});if(fields.fax)return NextResponse.json({error:'Unable to process request.'},{status:400});const required=kind==='partner'?['name','company','title','email','phone','partnershipInterest']:['firstName','lastName','company','title','email','phone','location','category'];for(const key of required){if(typeof fields[key]!=='string'||!fields[key].trim())return NextResponse.json({error:'Please complete all required fields.'},{status:400})}if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email))return NextResponse.json({error:'Please enter a valid email address.'},{status:400});const allowed=['name','firstName','lastName','company','title','email','phone','location','category','linkedin','referral','website','partnershipInterest','partnershipLevel','message'];const clean:Record<string,string>={};for(const key of allowed){if(fields[key]!==undefined){if(typeof fields[key]!=='string'||fields[key].length>(key==='message'?4000:500))return NextResponse.json({error:'Please shorten the information entered.'},{status:400});clean[key]=fields[key].trim()}}for(const key of ['linkedin','website'])if(clean[key]&&!/^https?:\/\//i.test(clean[key]))return NextResponse.json({error:'Please enter a full website URL beginning with https://.'},{status:400});if(!databaseReady())return NextResponse.json({error:'Applications are not open yet. Please check back.'},{status:503});const c=await getContent();if(!c.event.applicationsOpen||!c.legal.privacy)return NextResponse.json({error:'Applications are not open yet. Please check back.'},{status:503});const interests=Array.isArray(body.interests)?body.interests.filter((v:unknown)=>typeof v==='string'&&['Golf','Capital Summit','Private Salons','Partnerships'].includes(v)):[];const utm:Record<string,string>={};for(const key of ['utm_source','utm_medium','utm_campaign','utm_term','utm_content'])if(typeof body.utm?.[key]==='string')utm[key]=body.utm[key].slice(0,200);const fingerprint=createHash('sha256').update(clean.email.toLowerCase()).digest('hex');const result=await db('rpc/submit_igcs_lead',{method:'POST',body:JSON.stringify({p_kind:kind,p_fields:clean,p_interests:interests,p_source:typeof body.sourcePage==='string'?body.sourcePage.slice(0,500):'/',p_utm:utm,p_fingerprint:fingerprint})});if(!result.ok)return NextResponse.json({error:'We could not save your request. Please try again later.'},{status:503});const output=await result.json();if(output==='rate_limited')return NextResponse.json({error:'A request was recently received for this email. Please try again later.'},{status:429});return NextResponse.json({ok:true})}catch{return NextResponse.json({error:'Unable to process your request. Please try again.'},{status:400})}}
+import { isSameOrigin } from "@/lib/request-origin";
+import {
+  attendeeCategories,
+  leadInterests,
+  isWebUrl,
+} from "@/lib/lead-options";
+import { NextRequest, NextResponse } from "next/server";
+import { db, databaseReady, getContent } from "@/lib/server";
+import { createHash } from "node:crypto";
+export async function POST(req: NextRequest) {
+  if (!isSameOrigin(req))
+    return NextResponse.json(
+      { error: "Invalid request origin." },
+      { status: 403 },
+    );
+  if (Number(req.headers.get("content-length") || 0) > 20000)
+    return NextResponse.json({ error: "Request too large." }, { status: 413 });
+  try {
+    const raw = await req.text();
+    if (raw.length > 20000)
+      return NextResponse.json(
+        { error: "Request too large." },
+        { status: 413 },
+      );
+    const body = JSON.parse(raw);
+    const { kind, fields } = body;
+    if (
+      !["invitation", "partner"].includes(kind) ||
+      !fields ||
+      typeof fields !== "object"
+    )
+      return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+    if (kind === "invitation" && !attendeeCategories.includes(fields.category))
+      return NextResponse.json(
+        { error: "Please select a valid professional role." },
+        { status: 400 },
+      );
+    if (fields.fax)
+      return NextResponse.json(
+        { error: "Unable to process request." },
+        { status: 400 },
+      );
+    const required =
+      kind === "partner"
+        ? ["name", "company", "title", "email", "phone", "partnershipInterest"]
+        : [
+            "firstName",
+            "lastName",
+            "company",
+            "title",
+            "email",
+            "phone",
+            "location",
+            "category",
+          ];
+    for (const key of required) {
+      if (typeof fields[key] !== "string" || !fields[key].trim())
+        return NextResponse.json(
+          { error: "Please complete all required fields." },
+          { status: 400 },
+        );
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email.trim()))
+      return NextResponse.json(
+        { error: "Please enter a valid email address." },
+        { status: 400 },
+      );
+    const allowed = [
+      "name",
+      "firstName",
+      "lastName",
+      "company",
+      "title",
+      "email",
+      "phone",
+      "location",
+      "category",
+      "linkedin",
+      "referral",
+      "website",
+      "partnershipInterest",
+      "partnershipLevel",
+      "message",
+    ];
+    const clean: Record<string, string> = {};
+    for (const key of allowed) {
+      if (fields[key] !== undefined) {
+        if (
+          typeof fields[key] !== "string" ||
+          fields[key].length > (key === "message" ? 4000 : 500)
+        )
+          return NextResponse.json(
+            { error: "Please shorten the information entered." },
+            { status: 400 },
+          );
+        clean[key] = fields[key].trim();
+      }
+    }
+    for (const key of ["linkedin", "website"])
+      if (clean[key] && !isWebUrl(clean[key]))
+        return NextResponse.json(
+          { error: "Please enter a full website URL beginning with https://." },
+          { status: 400 },
+        );
+    if (!databaseReady())
+      return NextResponse.json(
+        { error: "Applications are not open yet. Please check back." },
+        { status: 503 },
+      );
+    const c = await getContent();
+    if (!c.event.applicationsOpen || !c.legal.privacy)
+      return NextResponse.json(
+        { error: "Applications are not open yet. Please check back." },
+        { status: 503 },
+      );
+    if (
+      kind === "partner" &&
+      !c.partnerships.types.includes(clean.partnershipInterest)
+    )
+      return NextResponse.json(
+        { error: "Please select a valid partnership interest." },
+        { status: 400 },
+      );
+    const interests = Array.isArray(body.interests)
+      ? body.interests.filter(
+          (v: unknown) => typeof v === "string" && leadInterests.includes(v),
+        )
+      : [];
+    const utm: Record<string, string> = {};
+    for (const key of [
+      "utm_source",
+      "utm_medium",
+      "utm_campaign",
+      "utm_term",
+      "utm_content",
+    ])
+      if (typeof body.utm?.[key] === "string")
+        utm[key] = body.utm[key].slice(0, 200);
+    const fingerprint = createHash("sha256")
+      .update(clean.email.toLowerCase())
+      .digest("hex");
+    const result = await db("rpc/submit_igcs_lead", {
+      method: "POST",
+      body: JSON.stringify({
+        p_kind: kind,
+        p_fields: clean,
+        p_interests: interests,
+        p_source:
+          typeof body.sourcePage === "string"
+            ? body.sourcePage.slice(0, 500)
+            : "/",
+        p_utm: utm,
+        p_fingerprint: fingerprint,
+      }),
+    });
+    if (!result.ok)
+      return NextResponse.json(
+        { error: "We could not save your request. Please try again later." },
+        { status: 503 },
+      );
+    const output = await result.json();
+    if (output === "rate_limited")
+      return NextResponse.json(
+        {
+          error:
+            "A request was recently received for this email. Please try again later.",
+        },
+        { status: 429 },
+      );
+    if (output !== "saved")
+      return NextResponse.json(
+        { error: "We could not confirm your request. Please try again later." },
+        { status: 503 },
+      );
+    return NextResponse.json({ ok: true });
+  } catch {
+    return NextResponse.json(
+      { error: "Unable to process your request. Please try again." },
+      { status: 400 },
+    );
+  }
+}
+
