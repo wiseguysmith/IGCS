@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Investor Golf Capital Summit
 
-## Getting Started
+Next.js + TypeScript + Tailwind. A responsive application-led event site with a protected content editor and structured lead pipeline, designed for Vercel and Supabase.
 
-First, run the development server:
+## Run
 
-```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+npm run build
+npm start
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Connect production
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Import wiseguysmith/IGCS into Vercel using the Next.js preset.
+2. Create or select an approved Supabase project and run supabase/schema.sql in its SQL editor. Tables have row-level security and no anonymous or authenticated table access; only server-side service-role requests can access them.
+3. Add SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to Vercel environment variables. Keep the service-role key secret; never put it in a NEXT_PUBLIC variable. Use .env.example for local configuration.
+4. Create an administrator in Supabase Auth. Using the Supabase dashboard or trusted server-side Admin API, assign app_metadata {"igcs_admin":true}. Do not put this role in user_metadata. The /admin route verifies the signed-in user against Supabase before every read/write, and stores the short-lived session in an HTTP-only SameSite cookie. Sign in again after the session expires.
+5. Visit /admin to edit event settings, copy, agenda, speakers, partners, updates, FAQs, legal policies and brand asset URLs. Empty speaker/partner collections are intentional; no fictional profiles are included.
+6. Add the approved Privacy Policy, verify storage with a test request in a nonproduction environment, and enable Applications Open in the content editor. Until these requirements are met, forms are visibly closed and the API rejects submissions.
+7. Set NEXT_PUBLIC_GA_ID to the approved GA4 ID. Analytics loads only after visitor consent. Meta/LinkedIn pixels are intentionally absent until approved. Named conversion/interest events are wired; no form values are sent to analytics. UTM values persist in session storage and are stored with leads.
+8. Add final logo artwork and approved brand variants. The current IG text mark and favicon are provisional, not a recreation or approval of the missing master logo. Add the official Mindful Tech URL in the editor. Generate approved OG imagery after the logo is supplied.
+9. Set SITE_INDEXABLE=true only on the approved production deployment. Exact dates, day-two venue, speakers, partners, ticket price, salon rules, prizes, payment provider and legal copy remain editable. No event schema is published while exact dates are unconfirmed.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Lead management
 
-## Learn More
+/admin separates attendee and partner submissions. Each record includes source page, UTM data, server timestamp, type, CRM tag, status, notes and owner. Applicant statuses: New, Review, Qualified, Invited, Registered, Paid, Attending, Declined, Waitlist. Partner statuses: Target, Intro, Discovery, Proposal, Negotiation, Contracted, Paid, Activated. The UI shows the newest 250 records; older records remain in Supabase. Lead API validates lengths and required fields, checks origin, includes a honeypot, and applies a database-atomic ten-minute per-email/per-type duplicate window. Configure platform-level rate limits or a bot challenge before broad public promotion.
 
-To learn more about Next.js, take a look at the following resources:
+A successful response is sent only after durable database insertion. Database failures never display a false success. Real storage/auth round-trip testing requires a connected Supabase project.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Registration roadmap
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+No public checkout is present. Extend the approved applicant record with a hashed, expiring, single-use registration token; add provider-independent payment and credential records. Validate approval server-side before private registration. Payment provider and payment methods remain undecided. No automatic acceptance, speaker confirmation, prize amounts or salon entitlement is promised.
 
-## Deploy on Vercel
+## Photography
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Keith Tanner, golf course aerial: https://unsplash.com/photos/a-golf-course-is-surrounded-by-trees-EGQ0m5QyNu8
+- Skyler Smith, San Antonio River Walk: https://unsplash.com/photos/riverwalk-with-buildings-and-trees-at-sunset-d_cORpul5MI
+- Ronan, dining detail: https://unsplash.com/photos/clear-wine-glasses-on-top-of-dining-table-PCE0T5i4pDI
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Downloaded as WebP, served using next/image. Unsplash License: https://unsplash.com/license. Golf and dining images are atmospheric and do not document the event venues. Replace with approved venue/event imagery when supplied.
+
+## Launch items still required
+
+Approved logo files and OG image, Vercel project access, Supabase project and admin provisioning, approved legal copy, GA4 measurement ID, official Mindful Tech link, final event details, production integration tests, and production Lighthouse verification. Do not claim the Phase 1 definition of done until these are complete.
